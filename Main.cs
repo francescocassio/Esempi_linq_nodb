@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,8 +21,23 @@ namespace LinqQuerySyntaxConsole
             new Student { Id = 2, Name = "Bob", Degree = "Ingegneria", Grades = new() { 25, 26 } },
             new Student { Id = 3, Name = "Charlie", Degree = "Matematica", Grades = new() { 30, 30, 30 } },
             new Student { Id = 4, Name = "Diana", Degree = "Fisica", Grades = new() { 27, 28, 26 } },
-            new Student { Id = 5, Name = "Edoardo", Degree = "Informatica", Grades = new() { 24, 22 } }
-        };
+            new Student { Id = 5, Name = "Edoardo", Degree = "Informatica", Grades = new() { 24, 22 } },
+            new Student { Id = 6, Name = "Francesca", Degree = "Informatica", Grades = new() { 29, 30 } },
+            new Student { Id = 7, Name = "Giorgio", Degree = "Ingegneria", Grades = new() { 25, 26, 28 } },
+            new Student { Id = 8, Name = "Hassan", Degree = "Fisica", Grades = new() { 30, 27, 29 } },
+            new Student { Id = 9, Name = "Irene", Degree = "Matematica", Grades = new() { 26, 26, 26 } },
+            new Student { Id = 11, Name = "Katia", Degree = "Informatica", Grades = new() { 30, 30 } },
+            new Student { Id = 12, Name = "Luca", Degree = "Ingegneria", Grades = new() { 22, 24, 25 } },
+            new Student { Id = 13, Name = "Martina", Degree = "Matematica", Grades = new() { 28, 29, 30 } },
+            new Student { Id = 14, Name = "Nicolò", Degree = "Fisica", Grades = new() { 25, 25 } },
+            new Student { Id = 15, Name = "Olga", Degree = "Economia", Grades = new() { 27, 28, 29 } },
+            new Student { Id = 16, Name = "Paolo", Degree = "Informatica", Grades = new() { 26, 28, 27 } },
+            new Student { Id = 17, Name = "Quentin", Degree = "Ingegneria", Grades = new() { 30, 29, 28 } },
+            new Student { Id = 18, Name = "Rebecca", Degree = "Matematica", Grades = new() { 24, 25 } },
+            new Student { Id = 19, Name = "Stefano", Degree = "Fisica", Grades = new() { 26, 27, 29 } },
+            new Student { Id = 20, Name = "Teresa", Degree = "Informatica", Grades = new() { 30, 30, 28 } },
+            new Student { Id = 10, Name = "Jacopo", Degree = "Economia", Grades = new() { 29, 27 } },
+    };
 
         static void Main()
         {
@@ -61,9 +77,9 @@ namespace LinqQuerySyntaxConsole
                     case "3": MostraStudentiMediaAlta2(); break;
                     case "4": MostraStudentiOrdinatiPerNome2(); break;
                     case "5": MostraStudentiPerMediaDesc2(); break;
-                    case "6": RaggruppaPerCorsoDiLaurea(); break;
+                    case "6": RaggruppaPerCorsoDiLaurea2(); break;
                     case "7": MostraSoloNomi(); break;
-                    case "8": PrimoStudenteDiMatematica(); break;
+                    case "8": PrimoStudenteDiMatematica2(); break;
                     case "9": StudentiConAlmenoUnTrenta(); break;
                     case "10": StudentiConTuttiVotiAlti(); break;
                     case "11": StudentiConAlmenoTreEsami(); break;
@@ -191,8 +207,8 @@ namespace LinqQuerySyntaxConsole
         static void MostraStudentiPerMediaDesc2()
         {
             var query = students
-                .OrderByDescending(s => s.Grades.Average())
-                .Select(s => s);
+                .OrderByDescending(s => s.Grades.Average());
+                //.Select(s => s);
 
             foreach (var s in query)
                 Console.WriteLine($"{s.Name} - Media: {s.Grades.Average():F2}");
@@ -214,13 +230,40 @@ namespace LinqQuerySyntaxConsole
             }
         }
 
+        static void RaggruppaPerCorsoDiLaurea2()
+        {
+            var query = students
+                .GroupBy(s => s.Degree);
+            foreach (var s in query)
+            {
+                Console.WriteLine($"Corso: {s.Key}");       //Key è la chiave del groupby --> Degree
+                foreach (var x in s)
+                Console.WriteLine($" - {x.Name}");
+            }
+        }
+
+        static void RaggruppaPerCorsoDiLaurea3()
+        {
+            var query = students
+                .GroupBy(s => s.Degree)
+                .Select(g => g);
+            foreach (var g in query)
+            {
+                Console.WriteLine($"Corso: {g.Key}");  // g.Key è il nome del corso
+                foreach (var s in g)
+                    Console.WriteLine($" - {s.Name}");
+            }
+        }
+
         // 7. Estrae solo i nomi
         static void MostraSoloNomi()
         {
-            var query =
-                from s in students
-                select s.Name;                     // Seleziona solo il campo Name
+            //var query =
+            //    from s in students
+            //    select s.Name;                     // Seleziona solo il campo Name
 
+            var query = students
+                .Select(s => s.Name);              // Seleziona solo il campo Name
             foreach (var name in query)
                 Console.WriteLine(name);
         }
@@ -233,6 +276,14 @@ namespace LinqQuerySyntaxConsole
                  where s.Degree == "Matematica"    // Cerca studenti di Matematica
                  select s).FirstOrDefault();       // Prende il primo oppure null
 
+            if (student != null)
+                Console.WriteLine(student.Name);
+        }
+
+        static void PrimoStudenteDiMatematica2()
+        {
+            var student = students
+                .Where(s => s.Degree == "Matematica").FirstOrDefault();
             if (student != null)
                 Console.WriteLine(student.Name);
         }
