@@ -56,11 +56,11 @@ namespace LinqQuerySyntaxConsole
 
                 switch (scelta)
                 {
-                    case "1": MostraTuttiGliStudenti(); break;
-                    case "2": MostraStudentiInformatica(); break;
-                    case "3": MostraStudentiMediaAlta(); break;
-                    case "4": MostraStudentiOrdinatiPerNome(); break;
-                    case "5": MostraStudentiPerMediaDesc(); break;
+                    case "1": MostraTuttiGliStudenti2(); break;
+                    case "2": MostraStudentiInformatica2(); break;
+                    case "3": MostraStudentiMediaAlta2(); break;
+                    case "4": MostraStudentiOrdinatiPerNome2(); break;
+                    case "5": MostraStudentiPerMediaDesc2(); break;
                     case "6": RaggruppaPerCorsoDiLaurea(); break;
                     case "7": MostraSoloNomi(); break;
                     case "8": PrimoStudenteDiMatematica(); break;
@@ -98,14 +98,33 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine($"{s.Name} - {s.Degree}");  // Stampa nome e corso di laurea
         }
 
+        static void MostraTuttiGliStudenti2()
+        {
+            // Crea una query LINQ che seleziona tutti gli studenti
+            var query = students
+                .Select(s => s);
+            // Scorre la query ed esegue una stampa per ogni studente
+            foreach (var s in query)
+                Console.WriteLine($"{s.Name} - {s.Degree}");  // Stampa nome e corso di laurea
+        }
+
         // 2. Studenti di Informatica
         static void MostraStudentiInformatica()
         {
-            var query =
+            var query = 
                 from s in students
                 where s.Degree == "Informatica"    // Filtra solo gli studenti con Degree = "Informatica"
                 select s;
 
+            foreach (var s in query)
+                Console.WriteLine(s.Name);         // Stampa solo il nome
+        }
+
+        static void MostraStudentiInformatica2()
+        {
+            var query = students
+                .Where(s => s.Degree == "Informatica")
+                .Select(s => s);
             foreach (var s in query)
                 Console.WriteLine(s.Name);         // Stampa solo il nome
         }
@@ -122,6 +141,19 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine($"{s.Name} - Media: {s.Grades.Average():F2}");
         }
 
+        static void MostraStudentiMediaAlta2()
+        {
+            var query = students
+                .Where(s => s.Grades.Average() > 27)
+                .Select(s => s);
+            foreach (var s in query)
+                Console.WriteLine($"{s.Name} - Media: {s.Grades.Average():F2}");
+
+            //select nome, avg(voto) as media from studenti
+            //group by voto
+            //having media > 27
+        }
+
         // 4. Ordinamento alfabetico
         static void MostraStudentiOrdinatiPerNome()
         {
@@ -134,6 +166,16 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine(s.Name);
         }
 
+        static void MostraStudentiOrdinatiPerNome2()
+        {
+            var query = students
+                .OrderBy(s => s.Name)
+                .Select(s => s.Name);
+
+            foreach (var s in query)
+                Console.WriteLine(s);
+        }
+
         // 5. Ordinamento per media decrescente
         static void MostraStudentiPerMediaDesc()
         {
@@ -141,6 +183,16 @@ namespace LinqQuerySyntaxConsole
                 from s in students
                 orderby s.Grades.Average() descending // Ordina per media in ordine decrescente
                 select s;
+
+            foreach (var s in query)
+                Console.WriteLine($"{s.Name} - Media: {s.Grades.Average():F2}");
+        }
+
+        static void MostraStudentiPerMediaDesc2()
+        {
+            var query = students
+                .OrderByDescending(s => s.Grades.Average())
+                .Select(s => s);
 
             foreach (var s in query)
                 Console.WriteLine($"{s.Name} - Media: {s.Grades.Average():F2}");
