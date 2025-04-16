@@ -7,7 +7,7 @@ namespace LinqQuerySyntaxConsole
 {
     public class Student
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Degree { get; set; }
         public List<int> Grades { get; set; } = new();
@@ -80,18 +80,18 @@ namespace LinqQuerySyntaxConsole
                     case "6": RaggruppaPerCorsoDiLaurea2(); break;
                     case "7": MostraSoloNomi(); break;
                     case "8": PrimoStudenteDiMatematica2(); break;
-                    case "9": StudentiConAlmenoUnTrenta(); break;
-                    case "10": StudentiConTuttiVotiAlti(); break;
+                    case "9": StudentiConAlmenoUnTrenta2(); break;
+                    case "10": StudentiConTuttiVotiAlti2(); break;
                     case "11": StudentiConAlmenoTreEsami(); break;
-                    case "12": NumeroVotiPerStudente(); break;
-                    case "13": StudentiConVotoVentidue(); break;
-                    case "14": StudentiConNomeCheIniziaConA(); break;
-                    case "15": StudentiInCorsoConIca(); break;
-                    case "16": VotoMassimoPerStudente(); break;
-                    case "17": SommaVotiMaggioriDiOttanta(); break;
-                    case "18": MediaPerStudente(); break;
-                    case "19": NomiLunghi(); break;
-                    case "20": MediaMassimaTraTutti(); break;
+                    case "12": NumeroVotiPerStudente2(); break;
+                    case "13": StudentiConVotoVentidue2(); break;
+                    case "14": StudentiConNomeCheIniziaConA2(); break;
+                    case "15": StudentiInCorsoConIca2(); break;
+                    case "16": VotoMassimoPerStudente2(); break;
+                    case "17": SommaVotiMaggioriDiOttanta2(); break;
+                    case "18": MediaPerStudente2(); break;
+                    case "19": NomiLunghi2(); break;
+                    case "20": MediaMassimaTraTutti2(); break;
                     case "0": return;
                     default: Console.WriteLine("Scelta non valida"); break;
                 }
@@ -127,7 +127,7 @@ namespace LinqQuerySyntaxConsole
         // 2. Studenti di Informatica
         static void MostraStudentiInformatica()
         {
-            var query = 
+            var query =
                 from s in students
                 where s.Degree == "Informatica"    // Filtra solo gli studenti con Degree = "Informatica"
                 select s;
@@ -208,7 +208,7 @@ namespace LinqQuerySyntaxConsole
         {
             var query = students
                 .OrderByDescending(s => s.Grades.Average());
-                //.Select(s => s);
+            //.Select(s => s);
 
             foreach (var s in query)
                 Console.WriteLine($"{s.Name} - Media: {s.Grades.Average():F2}");
@@ -238,7 +238,7 @@ namespace LinqQuerySyntaxConsole
             {
                 Console.WriteLine($"Corso: {s.Key}");       //Key è la chiave del groupby --> Degree
                 foreach (var x in s)
-                Console.WriteLine($" - {x.Name}");
+                    Console.WriteLine($" - {x.Name}");
             }
         }
 
@@ -282,8 +282,12 @@ namespace LinqQuerySyntaxConsole
 
         static void PrimoStudenteDiMatematica2()
         {
-            var student = students
-                .Where(s => s.Degree == "Matematica").FirstOrDefault();
+            //var student = students
+            //    .Where(s => s.Degree == "Matematica").FirstOrDefault();
+            //if (student != null)
+            //    Console.WriteLine(student.Name);
+
+            var student = students.FirstOrDefault(s => s.Degree == "Matematica");
             if (student != null)
                 Console.WriteLine(student.Name);
         }
@@ -300,6 +304,24 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine(s.Name);
         }
 
+        static void StudentiConAlmenoUnTrenta2()
+        {
+            //var query = students
+            //.Where(s => s.Grades.Contains(30));
+            //foreach (var s in query)
+            //    Console.WriteLine(s.Name);
+
+
+            List<Student> ListaStu = new List<Student>();
+            students.ForEach(s =>
+            {
+                if (s.Grades.Contains(30))
+                    ListaStu.Add(s);
+            });
+            foreach (var s in ListaStu)
+                Console.WriteLine(s.Name);
+        }
+
         // 10. Tutti voti >= 26
         static void StudentiConTuttiVotiAlti()
         {
@@ -312,6 +334,14 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine(s.Name);
         }
 
+        static void StudentiConTuttiVotiAlti2()
+        {
+            var query = students
+                .Where(s => s.Grades.All(g => g >= 26));
+            foreach (var s in query)
+                Console.WriteLine(s.Name);
+        }
+
         // 11. Almeno 3 esami
         static void StudentiConAlmenoTreEsami()
         {
@@ -320,7 +350,15 @@ namespace LinqQuerySyntaxConsole
                 where s.Grades.Count >= 3          // Lo studente ha almeno 3 voti
                 select s;
 
-            foreach (var s in query) 
+            foreach (var s in query)
+                Console.WriteLine(s.Name);
+        }
+
+        static void StudentiConAlmenoTreEsami2()
+        {
+            var query = students
+            .Where(s => s.Grades.Count >= 3);
+            foreach (var s in query)
                 Console.WriteLine(s.Name);
         }
 
@@ -335,6 +373,15 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine($"{s.Name} ha {s.Count} voti");
         }
 
+        static void NumeroVotiPerStudente2()
+        {
+            var query = students
+            .Select(s => new { s.Name, nVoti = s.Grades.Count });
+
+            foreach (var s in query)
+                Console.WriteLine($"{s.Name} ha {s.nVoti} voti");
+        }
+
         // 13. Studenti con voto 22
         static void StudentiConVotoVentidue()
         {
@@ -343,6 +390,14 @@ namespace LinqQuerySyntaxConsole
                 where s.Grades.Contains(22)        // Verifica se almeno un voto è 22
                 select s;
 
+            foreach (var s in query)
+                Console.WriteLine(s.Name);
+        }
+
+        static void StudentiConVotoVentidue2()
+        {
+            var query = students
+                .Where(s => s.Grades.Contains(22));
             foreach (var s in query)
                 Console.WriteLine(s.Name);
         }
@@ -359,6 +414,14 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine(s.Name);
         }
 
+        static void StudentiConNomeCheIniziaConA2()
+        {
+            var query = students
+                .Where(s => s.Name.StartsWith("A"));
+            foreach (var s in query)
+                Console.WriteLine(s.Name);
+        }
+
         // 15. Corso contiene 'ica'
         static void StudentiInCorsoConIca()
         {
@@ -371,6 +434,14 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine($"{s.Name} - {s.Degree}");
         }
 
+        static void StudentiInCorsoConIca2()
+        {
+            var query = students
+                .Where(s => s.Degree.Contains("ica"));
+            foreach (var s in query)
+                Console.WriteLine($"{s.Name} - {s.Degree}");
+        }
+
         // 16. Voto massimo
         static void VotoMassimoPerStudente()
         {
@@ -378,6 +449,14 @@ namespace LinqQuerySyntaxConsole
                 from s in students
                 select new { s.Name, Max = s.Grades.Max() };  // Proiezione con voto massimo
 
+            foreach (var r in query)
+                Console.WriteLine($"{r.Name}: {r.Max}");
+        }
+
+        static void VotoMassimoPerStudente2()
+        {
+            var query = students
+               .Select(s => new { s.Name, Max = s.Grades.Max() });
             foreach (var r in query)
                 Console.WriteLine($"{r.Name}: {r.Max}");
         }
@@ -394,6 +473,14 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine($"{s.Name} - Totale voti: {s.Grades.Sum()}");
         }
 
+        static void SommaVotiMaggioriDiOttanta2()
+        {
+            var query = students
+                .Where(s => s.Grades.Sum() > 80);
+            foreach (var s in query)
+                Console.WriteLine($"{s.Name} - Totale voti: {s.Grades.Sum()}");
+        }
+
         // 18. Media per studente
         static void MediaPerStudente()
         {
@@ -401,6 +488,15 @@ namespace LinqQuerySyntaxConsole
                 from s in students
                 select new { s.Name, Media = s.Grades.Average() };  // Calcolo media
 
+            foreach (var r in query)
+                Console.WriteLine($"{r.Name}: {r.Media:F2}");
+        }
+
+        static void MediaPerStudente2()
+        {
+            var query = students
+                .Select(s => new { s.Name, Media = s.Grades.Average() })
+                .Where(s => s.Media > 25);
             foreach (var r in query)
                 Console.WriteLine($"{r.Name}: {r.Media:F2}");
         }
@@ -417,6 +513,14 @@ namespace LinqQuerySyntaxConsole
                 Console.WriteLine(s.Name);
         }
 
+        static void NomiLunghi2()
+        {
+            var query = students
+                .Where(s => s.Name.Length > 5);
+            foreach (var s in query)
+                Console.WriteLine(s.Name);
+        }
+
         // 20. Media massima tra tutti
         static void MediaMassimaTraTutti()
         {
@@ -425,6 +529,17 @@ namespace LinqQuerySyntaxConsole
                  select s.Grades.Average()).Max(); // Prende la media di ogni studente e poi la Max
 
             Console.WriteLine($"Media massima: {max:F2}");
+        }
+
+        static void MediaMassimaTraTutti2()
+        {
+            var max = students
+                .Select(s => s.Grades.Average()).Max();
+            var name = students
+                .Where(s => s.Grades.Average() == max)
+                .Select(s => s.Name);
+            foreach (var n in name)
+                Console.WriteLine($"{n}, Media massima: {max:F2}");
         }
 
     }
